@@ -1,0 +1,42 @@
+{% extends 'linfox/linfoxbase.html' %}
+{% block title %}All Cargos{% endblock %}
+
+
+{% block content %}
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Welcome to Linfox(Admin) DashBoard</h3> 
+            <hr>
+            <a class="nav-link btn btn-primary" href="{% url 'ecomapp:linfoxproductcreate' %}">Add New Cargo</a>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <!-- <th>ID</th> -->
+                        <th>Cargo company</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Join on</th>
+                        <th>cargo status</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in allcargo %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <!-- <td></td> -->
+                        <td>{{p.CampanyName}}</td>
+                        <td><img src="{{p.image.url}}" style="height: 100px;" alt=""></td>
+                        <td>{{p.price}}</td>
+                        <td>{{p.joined_on}}</td>
+                        <td>{{p.cargo_status}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
