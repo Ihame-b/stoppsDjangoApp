@@ -1,4 +1,5 @@
 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +13,8 @@
        <!-- visit https://fonts.google.com/specimen/Courier+Prime?preview.text_type=custom to get script-->
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap" rel="stylesheet">
-  
+    <link rel="stylesheet" href="{% static 'main.css' %}"></link>
+
   <!-- https://cdnjs.com/libraries/toastr.js/latest -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -90,7 +92,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-info">
-        <a class="navbar-brand" href="{% url 'ecomapp:home' %}">STOPS</a>
+    <a class="navbar-brand" href="{% url 'ecomapp:home' %}"><img id="logo" src="{% static '/yp.png' %}"></a>   
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -117,23 +119,22 @@
             </form>
 
             <div >
-              {% if request.user.customer %}
+             {% if request.user.customer %}
               <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerprofile' %}">My Profile</a>
               <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
               {% else %}
               
               <div >
               <div>
-                  <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerregistration' %}">Register as Customer</a>
-                  <a class="nav-link btn btn-primary" href="{% url 'ecomapp:poregistration' %}">Register as ProductOwner</a>
+                 
+                  <a class="nav-link btn btn-primary" href="#footer"><img src="https://cdn.onlinewebfonts.com/svg/img_67908.png" style="height: 30px; width: 40px;" alt="" ></a>
+           
               </div>
               <div>
-                  <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerlogin' %}">Login as Customer</a>
-                  <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminlogin' %}">Login as Admin(Linfox)</a>
-                  <a class="nav-link btn btn-primary" href="{% url 'ecomapp:productOwnerlogin' %}">Login as Product Owner</a>
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerlogin' %}">Login</a>
               </div>
           </div>
-              {% endif %}
+              {% endif %} 
               </div>
 
         </div>
@@ -148,11 +149,23 @@
         <footer>
             <div class="social"><a href="#"><i class="icon ion-social-instagram"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-facebook"></i></a></div>
             <ul class="list-inline">
-                <li class="list-inline-item"><a href="#">Home</a></li>
-                <li class="list-inline-item"><a href="#">Services</a></li>
-                <li class="list-inline-item"><a href="#">About</a></li>
-                <li class="list-inline-item"><a href="#">Terms</a></li>
-                <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+               {% if request.user.customer %}
+              <a class="list-inline-item" href="{% url 'ecomapp:customerprofile' %}">My Profile</a>
+              <a class="list-inline-item" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
+              {% else %}
+              
+              <div >
+              <div id="register">
+                  <a class="list-inline-item" href="{% url 'ecomapp:customerregistration' %}"> | Register as Customer</a>
+                  <a class="list-inline-item" href="{% url 'ecomapp:poregistration' %}"> | Register as ProductOwner</a>
+              </div>
+              <div id="login">
+                  <a class="list-inline-item" href="{% url 'ecomapp:customerlogin' %}"> | Login as Customer</a>
+                  <a class="list-inline-item" href="{% url 'ecomapp:adminlogin' %}"> | Login as Admin(Linfox)</a>
+                  <a class="list-inline-item" href="{% url 'ecomapp:productOwnerlogin' %}"> | Login as Product Owner</a>
+              </div>
+          </div>
+              {% endif %}
             </ul>
             <p class="copyright">Company Name © 2022</p>
         </footer>
@@ -175,7 +188,7 @@
 
   <!-- https://cdnjs.com/libraries/toastr.js/latest -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+<script src="{% static 'main.js' %}"></script>
 
 
 </body>
