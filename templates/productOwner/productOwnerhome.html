@@ -1,0 +1,14 @@
+{% extends "productOwner/productOwnerbase.html" %}
+{% block title %}All Cargos{% endblock %}
+
+
+{% block content %}
+<div class="container"> 
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Welcome to ProductOwner DashBoard </h3><hr>
+            <a class=" btn btn-primary" href="{% url 'ecomapp:poproductcreate' %}">Add New Product</a>       
+        </div>
+    </div>
+</div>
+{% endblock %}
