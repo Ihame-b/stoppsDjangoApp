@@ -58,17 +58,23 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ["title", "slug", "category", "image", "county", "town", "marked_price",
+        fields = ["title", "slug","productowner", "category", "image", "county", "town", "marked_price",
                   "selling_price", "description", "warranty", "return_policy"]
         widgets = {
             "title": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Enter the product title here..."
             }),
+           
             "slug": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Enter the unique slug here..."
             }),
+            "productowner": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "Enter the productowner Phone here..."
+            }),
+            
             "category": forms.Select(attrs={
                 "class": "form-control"
             }),
@@ -117,15 +123,18 @@ class CargoForm(forms.ModelForm):
 
     class Meta:
         model = Cargo
-        fields = ["CampanyName","driverName", "address",  "image", "price",]
+        fields = ["CampanyName","driverName", "address",  "image", "price","cargo_status"]
         widgets = {
-            "CampanyName": forms.TextInput(attrs={
+            "CampanyName": forms.Select(attrs={
                 "class": "form-control",
                 "placeholder": "Enter the Company name here..."
             }),
              "DriverName": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "Enter the Driver name here..."
+            }),
+            "cargo_status": forms.Select(attrs={
+                "class": "form-control"
             }),
             "address": forms.TextInput(attrs={
                 "class": "form-control",

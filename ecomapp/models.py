@@ -81,7 +81,8 @@ class Product(models.Model):
     warranty = models.CharField(max_length=300, null=True, blank=True)
     return_policy = models.CharField(max_length=300, null=True, blank=True)
     view_count = models.PositiveIntegerField(default=0)
-    productowner=models.CharField(User.get_full_name, max_length=300)
+    productowner=models.CharField(max_length=300)
+    productowneremail=models.CharField(Customer.get_deferred_fields, max_length=300, default=" ")
 
     def __str__(self):
         return self.title
@@ -117,16 +118,16 @@ CARGO_STATUS = (
 )
 
 class Cargo(models.Model):
-        CampanyName = models.CharField(max_length=20, choices=Company, default="Linfox")
+        CampanyName = models.CharField(max_length=20, choices=Company, default="LINFOX")
         driverName=models.CharField(max_length=20, default="bob")
         # driverphone=models.CharField(max_length=20, default="0788558866")
         #driverEmail=models.EmailField(default="ihamegrbt@gmail.com")
         joined_on = models.DateTimeField(auto_now_add=True)
-        address = models.CharField(verbose_name="Address",max_length=100, null=True, blank=True, default="kk 310st")
+        address = models.CharField(verbose_name="Address",max_length=100, null=True, blank=True, default=" ")
         image = models.ImageField(upload_to="products", default=0)
         price = models.PositiveIntegerField(default=0)
         view_count = models.PositiveIntegerField(default=0)
-        cargo_status = models.CharField(max_length=50, choices=CARGO_STATUS, default="Cargo Available")
+        cargo_status = models.CharField(max_length=50, choices=CARGO_STATUS, default=" ")
 
   
         def __str__(self):
@@ -176,7 +177,7 @@ METHOD = (
 
 
 class Order(models.Model):
-    cart = models.OneToOneField(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     ordered_by = models.CharField(max_length=200)
     shipping_address = models.CharField(max_length=200)
     mobile = models.CharField(max_length=10)

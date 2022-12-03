@@ -7,6 +7,7 @@ from ecomapp import views as map_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("ecomapp.urls")),
+    path("", include("djangomail.urls")),
     
 ] 
 

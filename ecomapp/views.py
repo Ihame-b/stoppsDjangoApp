@@ -12,6 +12,7 @@ from django.db.models import Q
 from .models import *
 from .forms import *
 import requests
+# import request
 #map
 from ecomproject.mixins import Directions
 
@@ -708,5 +709,19 @@ class productOwnerCreateView(productOwnerRequiredMixin, CreateView):
         for i in images:
             ProductImage.objects.create(cargo=p, image=i)
         return super().form_valid(form)        
+
+
+# class indexemail( CreateView):
+
+#     def index(requests):
+#       if requests.method == 'POST':
+#         full_name = requests.POST.get('full_name')
+#         county = requests.POST.get('county')
+#         email = requests.POST.get('email')
+#         send_mail(full_name, county, settings.EMAIL_HOST_USER,
+#                   [email], fail_silently=False)
+#         return render(requests, 'email_sent.html', {'email': email})
+
+#       return render(requests, 'customerregistration.html', {})            
 
 

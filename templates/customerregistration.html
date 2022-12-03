@@ -14,8 +14,43 @@
             <h3>Registration Form</h3><hr>
             <form action="" method="POST">
                 {% csrf_token %}
-                {{form.as_p}}
-                <button class="btn btn-primary">Register</button>
+    {% comment %} {{form.as_p}} {% endcomment %}
+<div class="form-group">
+          <label for="exampleInputEmail1">username</label>
+          <input type="text" name="username" class="form-control">
+</div>
+
+ <div class="form-group">
+          <label for="exampleInputEmail1">password</label>
+          <input type="text" name="password" class="form-control">
+</div>
+
+ <div class="form-group">
+          <label for="exampleInputEmail1">full_name</label>
+          <input type="text" name="full_name" class="form-control">
+</div>
+
+ <div class="form-group">
+          <label for="exampleInputEmail1">county</label>
+          <input type="text" name="county" class="form-control">
+</div>
+
+ <div class="form-group">
+          <label for="exampleInputEmail1">town</label>
+          <input type="text" name="town" class="form-control">
+</div>
+
+ <div class="form-group">
+          <label for="exampleInputEmail1">email</label>
+          <input type="text" name="email" class="form-control">
+</div>
+
+     <div class="form-group">
+          <label for="exampleInputEmail1">address</label>
+          <input type="text" name="address" class="form-control">
+</div>
+
+                <button type="submit" class="btn btn-primary">Register</button>
             </form>
             <p> Already have an account? <a href="{% url 'ecomapp:customerlogin' %}">Login here</a></p>
         </div>

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "ecomapp",
 #     'debug_toolbar',
+     "djangomail",
  ]
 
 MIDDLEWARE = [
@@ -134,12 +135,16 @@ STATIC_ROOT = BASE_DIR / "static_cdn"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
+
+# SMTP CONFIGURATIONS
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'enter_your_email_here'
+# EMAIL_HOST_PASSWORD = 'enter_email_password'
+EMAIL_HOST_USER = "ihamegrbt@gmail.com"
+EMAIL_HOST_PASSWORD = "ppzzlidlpjeieoyn"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "ihamegrbt@gmail.com"
-EMAIL_HOST_PASSWORD = "gsgxechqvudhjync"
 
 #Map
 # GOOGLE_API_KEY ="AIzaSyClE7cR8CYsxKMw-wZvVwCXDCCI4dshjVk"
