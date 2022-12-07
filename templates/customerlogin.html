@@ -16,18 +16,18 @@
             <!-- id="signinform" -->
             <form action="" method="POST">
                 {% csrf_token %}
-                {{form.as_p}}
+                {% comment %} {{form.as_p}} {% endcomment %}
 
-                <!-- <label for="username">Username</label>
+             <label for="username">Username</label>
                 {{form.username}}
             
                 <label for="password">Password</label>
                 {{form.password}}
             
-                <label class="check-container">Show Passwords
+                <label class="check-container" >Show Passwords
                  <input type="checkbox" onclick="showPword()">
                  <span class="checkmark"></span>
-               </label> -->
+               </label> 
 
                 <button class="btn btn-primary">Login as a Customer</button>
                 {% if error %}

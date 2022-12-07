@@ -15,7 +15,19 @@
             <hr>
             <form action="" method="POST">
                 {% csrf_token %}
-                {{form.as_p}}
+                {% comment %} {{form.as_p}} {% endcomment %}
+
+                <label for="username">Username</label>
+                {{form.username}}
+            
+                <label for="password">Password</label>
+                {{form.password}}
+            
+                <label class="check-container" >Show Passwords
+                 <input type="checkbox" onclick="showPword()">
+                 <span class="checkmark"></span>
+               </label> 
+
                 <button class="nav-link btn btn-primary" class="btn btn-primary">Login as a Admin(Linfox)</button>
                 {% if error %}
                 <li style="color: red;">{{error}}</li>

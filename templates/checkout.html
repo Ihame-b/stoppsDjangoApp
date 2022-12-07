@@ -40,7 +40,7 @@
             <h3>Checkout Form</h3>
             <form action="" method="POST">
                 {% csrf_token %}
-                {{form.as_p}}
+               {{form.as_p}} 
 
   {% comment %} <div class="form-group">
           <label for="exampleInputEmail1">Names</label>
@@ -60,48 +60,18 @@
  <div class="form-group">
           <label for="exampleInputEmail1">Email</label>
           <input type="text" id="email" class="form-control">
-</div>  {% endcomment %}
+</div> 
+ <div class="form-group">
+          <label for="exampleInputEmail1">Amount</label>
+          <input type="number" id="amount" class="form-control">
+</div> type="submit" {% endcomment %}
 
-        <button class="btn btn-info">Place order</button>
+        <button  class="btn btn-info">Place order</button>
             </form>
         </div>
     </div>
 </div>
 
-{% comment %} <script>
 
-const form = document.getElementById('form');
-form.addEventListener("submit", payNow);
-
-function payNow(e) {
- e.preventDefault();
- 
-    FlutterwaveCheckout({
-      
-      public_key: "FLWPUBK_TEST-e61590805f79c3be682dec246f8c1510-X",
-      tx_ref: "AK_"+Math.floor((Math.random() * 1000000000) + 1),
-      amount: document.getElementById(50000).value,
-      currency: "RWF",
-	  
-      //payment_options: "card,mobilemoney,ussd",
-	  
-      customer: {
-        email: document.getElementById("email").value,
-        phonenumber: document.getElementById("mobile").value,
-        name: document.getElementById("name").value,
-      },
-	  
-      callback: (data)=> { 
-		  const reference = data.tx_ref;
-      alert('Payment complete! Reference: ' + reference);
-      },
-	  
-      customizations: {
-        title: "IHAME App",
-        description: "FlutterWave Integration in Javascript.",
-		    logo: "C:\Users\IHAME\Desktop\WebDesign\IhameWebsite\design\20211128_231345_0000.png",
-      },
-    });
-</script> {% endcomment %}
 
 {% endblock %}

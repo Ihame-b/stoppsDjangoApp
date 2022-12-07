@@ -26,7 +26,7 @@ class Admin(models.Model):
         return f'{self.user}'
 
 class LinfoxUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=50)
     image = models.ImageField(upload_to="linfox")
     mobile = models.CharField(max_length=20)
@@ -36,7 +36,7 @@ class LinfoxUser(models.Model):
         return self.user.username   
 
 class ProductOwner(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=50)
     image = models.ImageField(upload_to="productowner")
     mobile = models.CharField(max_length=20)
@@ -46,7 +46,7 @@ class ProductOwner(models.Model):
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=200)
     address = models.CharField(max_length=200, null=True, blank=True)
     joined_on = models.DateTimeField(auto_now_add=True)
@@ -82,7 +82,8 @@ class Product(models.Model):
     return_policy = models.CharField(max_length=300, null=True, blank=True)
     view_count = models.PositiveIntegerField(default=0)
     productowner=models.CharField(max_length=300)
-    productowneremail=models.CharField(Customer.get_deferred_fields, max_length=300, default=" ")
+    productowneremail=models.CharField(User.get_email_field_name, max_length=300, default=" ")
+    size = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -119,8 +120,8 @@ CARGO_STATUS = (
 
 class Cargo(models.Model):
         CampanyName = models.CharField(max_length=20, choices=Company, default="LINFOX")
-        driverName=models.CharField(max_length=20, default="bob")
-        # driverphone=models.CharField(max_length=20, default="0788558866")
+        driverName=models.CharField(max_length=20, default=" ")
+        # driverphone=models.CharField(max_length=20, default=" ")
         #driverEmail=models.EmailField(default="ihamegrbt@gmail.com")
         joined_on = models.DateTimeField(auto_now_add=True)
         address = models.CharField(verbose_name="Address",max_length=100, null=True, blank=True, default=" ")
@@ -128,7 +129,7 @@ class Cargo(models.Model):
         price = models.PositiveIntegerField(default=0)
         view_count = models.PositiveIntegerField(default=0)
         cargo_status = models.CharField(max_length=50, choices=CARGO_STATUS, default=" ")
-
+        #size = models.PositiveIntegerField(default=0)
   
         def __str__(self):
             return "Cardo: " + str(self.id)     
@@ -170,7 +171,6 @@ ORDER_STATUS = (
 METHOD = (
     ("Cash On Delivery", "Cash On Delivery"),
     ("MOMO", "momo"),
-    ("Khalti", "Khalti"),
     ("Esewa", "Esewa"),
     
 )
