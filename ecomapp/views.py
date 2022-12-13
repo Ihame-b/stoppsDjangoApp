@@ -172,9 +172,11 @@ class MyCartView(EcomMixin, TemplateView):
         cart_id = self.request.session.get("cart_id", None)
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
+            cargo = Cargo.objects.all()
         else:
             cart = None
         context['cart'] = cart
+        context['cargo'] = cargo
         return context
 
 
