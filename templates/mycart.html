@@ -24,7 +24,14 @@
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{cp.product.title}}</td>
-                        <td> <a href="#">{{cp.cargo.driverName}}</a> </td>
+                        {% comment %} <td> <a href="#">{{cp.cargo.driverName}}</a> </td> {% endcomment %}
+                        <td>
+                            <select class="form-select">
+                                {% for cg in cargo %}
+                                    <option> {{cg.CampanyName}} - {{cg.price}}</option>
+                                {% endfor %}
+                            </select> 
+                        </td>
                         <td>{{cp.rate}}</td>
                         <td>{{cp.quantity}}</td>
                         <td>{{cp.subtotal}}</td>
