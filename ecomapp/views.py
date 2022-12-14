@@ -6,6 +6,7 @@ from django.views.generic import (
     DetailView,
     ListView,
 )
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -16,24 +17,43 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
 from django.db.models import Q
-from .models import *
-from .forms import *
+from .models import (
+    Admin,
+    ProductOwner,
+    Customer,
+    Category,
+    Product,
+    ProductImage,
+    Cart,
+    Cargo,
+    CartProduct,
+    Order,
+    LinfoxImage,
+    ORDER_STATUS,
+)
 import requests
 
 # import request
-# map
-from ecomproject.mixins import Directions
+# from ecomproject.mixins import Directions
 
-from ecomproject.mixins import (
-    AjaxFormMixin,
-    reCAPTCHAValidation,
-    FormErrors,
-    RedirectParams,
-)
+# from ecomproject.mixins import (
+#     AjaxFormMixin,
+#     reCAPTCHAValidation,
+#     FormErrors,
+#     RedirectParams,
+# )
 from .forms import (
-    UserForm,
-    UserProfileForm,
-    AuthForm,
+    CheckoutForm,
+    productOwnerRegistrationForm,
+    CustomerRegistrationForm,
+    CustomerLoginForm,
+    PasswordForgotForm,
+    PasswordResetForm,
+    ProductForm,
+    CargoForm,
+    # UserForm,
+    # UserProfileForm,
+    # AuthForm,
 )
 
 
@@ -153,6 +173,7 @@ class ManageCartView(EcomMixin, View):
             cp_obj.save()
             cart_obj.total += cp_obj.rate
             cart_obj.save()
+
         elif action == "dcr":
             cp_obj.quantity -= 1
             cp_obj.subtotal -= cp_obj.rate
@@ -166,8 +187,9 @@ class ManageCartView(EcomMixin, View):
             cart_obj.total -= cp_obj.subtotal
             cart_obj.save()
             cp_obj.delete()
-        else:
-            pass
+
+        # elif action == "add_cargo":
+
         return redirect("ecomapp:mycart")
 
 
@@ -309,13 +331,13 @@ class EsewaVerifyView(View):
 
         order_id = oid.split("_")[1]
         order_obj = Order.objects.get(id=order_id)
-        if status == "Success":
-            order_obj.payment_completed = True
-            order_obj.save()
-            return redirect("/")
-        else:
 
-            return redirect("/esewa-request/?o_id=" + order_id)
+        if status != "Success":
+            return redirect(f"/esewa-request/?o_id={order_id}")
+
+        order_obj.payment_completed = True
+        order_obj.save()
+        return redirect("/")
 
 
 class ProductOwnerRegistrationView(CreateView):
@@ -334,8 +356,7 @@ class ProductOwnerRegistrationView(CreateView):
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
 
@@ -356,8 +377,7 @@ class CustomerRegistrationView(CreateView):
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
 
@@ -391,8 +411,7 @@ class CustomerLoginView(FormView):
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
 
@@ -410,11 +429,9 @@ class CustomerProfileView(TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         if (
-            request.user.is_authenticated
-            and Customer.objects.filter(user=request.user).exists()
+            not request.user.is_authenticated
+            or not Customer.objects.filter(user=request.user).exists()
         ):
-            pass
-        else:
             return redirect("/login/?next=/profile/")
         return super().dispatch(request, *args, **kwargs)
 
@@ -477,7 +494,9 @@ class PasswordForgotView(FormView):
         # send mail to the user with email
         text_content = "Please Click the link below to reset your password. "
         user = customer.user
-        html_content = f"{url}/password-reset/{email}/{password_reset_token.make_token(user)}/"
+        html_content = (
+            f"{url}/password-reset/{email}/{password_reset_token.make_token(user)}/"
+        )
 
         send_mail(
             "Password Reset Link | Django STOPPS",
@@ -498,9 +517,7 @@ class PasswordResetView(FormView):
         email = self.kwargs.get("email")
         user = User.objects.get(email=email)
         token = self.kwargs.get("token")
-        if user is not None and password_reset_token.check_token(user, token):
-            pass
-        else:
+        if user is None or not password_reset_token.check_token(user, token):
             return redirect(reverse("ecomapp:passworforgot") + "?m=e")
 
         return super().dispatch(request, *args, **kwargs)
@@ -540,11 +557,9 @@ class AdminLoginView(FormView):
 class AdminRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if (
-            request.user.is_authenticated
-            and Admin.objects.filter(user=request.user).exists()
+            not request.user.is_authenticated
+            or not Admin.objects.filter(user=request.user).exists()
         ):
-            pass
-        else:
             return redirect("/admin-login/")
         return super().dispatch(request, *args, **kwargs)
 
@@ -634,11 +649,9 @@ class LinfoxLoginView(FormView):
 class LinfoxRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if (
-            request.user.is_authenticated
-            and Admin.objects.filter(user=request.user).exists()
+            not request.user.is_authenticated
+            or not Admin.objects.filter(user=request.user).exists()
         ):
-            pass
-        else:
             return redirect("/linfox-login/")
         return super().dispatch(request, *args, **kwargs)
 
@@ -736,11 +749,9 @@ class productOwnerLoginView(FormView):
 class productOwnerRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
         if (
-            request.user.is_authenticated
-            and ProductOwner.objects.filter(user=request.user).exists()
+            not request.user.is_authenticated
+            or not ProductOwner.objects.filter(user=request.user).exists()
         ):
-            pass
-        else:
             return redirect("/product-login/")
         return super().dispatch(request, *args, **kwargs)
 
