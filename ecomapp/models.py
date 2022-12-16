@@ -183,7 +183,7 @@ class Cargo(models.Model):
     # size = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f"Cardo: {str(self.id)}"
+        return f"Cargo: {str(self.id)}"
 
 
 class LinfoxImage(models.Model):
