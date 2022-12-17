@@ -16,7 +16,7 @@ from .utils import password_reset_token
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Sum
 from .models import (
     Admin,
     ProductOwner,
@@ -163,7 +163,7 @@ class AddToCartView(EcomMixin, TemplateView):
 class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
         cp_id = self.kwargs["cp_id"]
-        action = request.GET.get("action")
+        action = self.request.GET.get("action")
         cp_obj = CartProduct.objects.get(id=cp_id)
         cart_obj = cp_obj.cart
 
@@ -188,7 +188,21 @@ class ManageCartView(EcomMixin, View):
             cart_obj.save()
             cp_obj.delete()
 
-        # elif action == "add_cargo":
+        elif action == "cargo":
+            cargo_id = self.request.GET.get("id")
+            cargo = Cargo.objects.filter(id=int(cargo_id)).first()
+            cp_obj.cargo = cargo
+
+            # Recalculate the subtotal
+            cp_obj.subtotal = (cp_obj.rate*cp_obj.quantity)+cp_obj.cargo.price
+            cp_obj.save()
+
+            # Recalculate the total by summing all the subtotals
+            total = CartProduct.objects \
+                .filter(cart_id=cp_obj.cart_id) \
+                .aggregate(Sum('subtotal'))
+            cart_obj.total = total['subtotal__sum']
+            cart_obj.save()
 
         return redirect("ecomapp:mycart")
 
@@ -210,13 +224,13 @@ class MyCartView(EcomMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart_id = self.request.session.get("cart_id", None)
+        cargo = Cargo.objects.all()
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
-            cargo = Cargo.objects.all()
         else:
             cart = None
         context["cart"] = cart
-        context["cargo"] = cargo
+        context["cargo_list"] = cargo
         return context
 
 
