@@ -1,4 +1,12 @@
-from django.views.generic import View, TemplateView, CreateView, FormView, DetailView, ListView
+from django.views.generic import (
+    View,
+    TemplateView,
+    CreateView,
+    FormView,
+    DetailView,
+    ListView,
+)
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -8,28 +16,49 @@ from .utils import password_reset_token
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
-from django.db.models import Q
-from .models import *
-from .forms import *
+from django.db.models import Q, Sum
+from .models import (
+    Admin,
+    ProductOwner,
+    Customer,
+    Category,
+    Product,
+    ProductImage,
+    Cart,
+    Cargo,
+    CartProduct,
+    Order,
+    LinfoxImage,
+    ORDER_STATUS,
+)
 import requests
+
 # import request
-#map
-from ecomproject.mixins import Directions
+# from ecomproject.mixins import Directions
 
-from ecomproject.mixins import(
-	AjaxFormMixin, 
-	reCAPTCHAValidation,
-	FormErrors,
-	RedirectParams,
-	)
+# from ecomproject.mixins import (
+#     AjaxFormMixin,
+#     reCAPTCHAValidation,
+#     FormErrors,
+#     RedirectParams,
+# )
 from .forms import (
-	UserForm,
-	UserProfileForm,
-	AuthForm,
-	)
+    CheckoutForm,
+    productOwnerRegistrationForm,
+    CustomerRegistrationForm,
+    CustomerLoginForm,
+    PasswordForgotForm,
+    PasswordResetForm,
+    ProductForm,
+    CargoForm,
+    # UserForm,
+    # UserProfileForm,
+    # AuthForm,
+)
 
 
-#My App
+# My App
+
 
 class EcomMixin(object):
     def dispatch(self, request, *args, **kwargs):
@@ -37,8 +66,8 @@ class EcomMixin(object):
         if cart_id:
             cart_obj = Cart.objects.get(id=cart_id)
             if request.user.is_authenticated:
-            #     cart_obj.customer = request.user.customer
-             cart_obj.save()
+                #     cart_obj.customer = request.user.customer
+                cart_obj.save()
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -47,13 +76,13 @@ class HomeView(EcomMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['myname'] = "Dipak Niroula"
+        context["myname"] = "Dipak Niroula"
         all_products = Product.objects.all().order_by("-id")
         paginator = Paginator(all_products, 8)
-        page_number = self.request.GET.get('page')
+        page_number = self.request.GET.get("page")
         print(page_number)
         product_list = paginator.get_page(page_number)
-        context['product_list'] = product_list
+        context["product_list"] = product_list
         return context
 
 
@@ -62,7 +91,7 @@ class AllProductsView(EcomMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['allcategories'] = Category.objects.all()
+        context["allcategories"] = Category.objects.all()
         return context
 
 
@@ -71,11 +100,11 @@ class ProductDetailView(EcomMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        url_slug = self.kwargs['slug']
+        url_slug = self.kwargs["slug"]
         product = Product.objects.get(slug=url_slug)
         product.view_count += 1
         product.save()
-        context['product'] = product
+        context["product"] = product
         return context
 
 
@@ -85,7 +114,7 @@ class AddToCartView(EcomMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # get product id from requested url
-        product_id = self.kwargs['pro_id']
+        product_id = self.kwargs["pro_id"]
         # get product
         product_obj = Product.objects.get(id=product_id)
 
@@ -93,8 +122,7 @@ class AddToCartView(EcomMixin, TemplateView):
         cart_id = self.request.session.get("cart_id", None)
         if cart_id:
             cart_obj = Cart.objects.get(id=cart_id)
-            this_product_in_cart = cart_obj.cartproduct_set.filter(
-                product=product_obj)
+            this_product_in_cart = cart_obj.cartproduct_set.filter(product=product_obj)
 
             # item already exists in cart
             if this_product_in_cart.exists():
@@ -107,15 +135,25 @@ class AddToCartView(EcomMixin, TemplateView):
             # new item is added in cart
             else:
                 cartproduct = CartProduct.objects.create(
-                    cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
+                    cart=cart_obj,
+                    product=product_obj,
+                    rate=product_obj.selling_price,
+                    quantity=1,
+                    subtotal=product_obj.selling_price,
+                )
                 cart_obj.total += product_obj.selling_price
                 cart_obj.save()
 
         else:
             cart_obj = Cart.objects.create(total=0)
-            self.request.session['cart_id'] = cart_obj.id
+            self.request.session["cart_id"] = cart_obj.id
             cartproduct = CartProduct.objects.create(
-                cart=cart_obj, product=product_obj, rate=product_obj.selling_price, quantity=1, subtotal=product_obj.selling_price)
+                cart=cart_obj,
+                product=product_obj,
+                rate=product_obj.selling_price,
+                quantity=1,
+                subtotal=product_obj.selling_price,
+            )
             cart_obj.total += product_obj.selling_price
             cart_obj.save()
 
@@ -125,7 +163,7 @@ class AddToCartView(EcomMixin, TemplateView):
 class ManageCartView(EcomMixin, View):
     def get(self, request, *args, **kwargs):
         cp_id = self.kwargs["cp_id"]
-        action = request.GET.get("action")
+        action = self.request.GET.get("action")
         cp_obj = CartProduct.objects.get(id=cp_id)
         cart_obj = cp_obj.cart
 
@@ -135,6 +173,7 @@ class ManageCartView(EcomMixin, View):
             cp_obj.save()
             cart_obj.total += cp_obj.rate
             cart_obj.save()
+
         elif action == "dcr":
             cp_obj.quantity -= 1
             cp_obj.subtotal -= cp_obj.rate
@@ -148,8 +187,23 @@ class ManageCartView(EcomMixin, View):
             cart_obj.total -= cp_obj.subtotal
             cart_obj.save()
             cp_obj.delete()
-        else:
-            pass
+
+        elif action == "cargo":
+            cargo_id = self.request.GET.get("id")
+            cargo = Cargo.objects.filter(id=int(cargo_id)).first()
+            cp_obj.cargo = cargo
+
+            # Recalculate the subtotal
+            cp_obj.subtotal = (cp_obj.rate*cp_obj.quantity)+cp_obj.cargo.price
+            cp_obj.save()
+
+            # Recalculate the total by summing all the subtotals
+            total = CartProduct.objects \
+                .filter(cart_id=cp_obj.cart_id) \
+                .aggregate(Sum('subtotal'))
+            cart_obj.total = total['subtotal__sum']
+            cart_obj.save()
+
         return redirect("ecomapp:mycart")
 
 
@@ -170,13 +224,13 @@ class MyCartView(EcomMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart_id = self.request.session.get("cart_id", None)
+        cargo = Cargo.objects.all()
         if cart_id:
             cart = Cart.objects.get(id=cart_id)
-            cargo = Cargo.objects.all()
         else:
             cart = None
-        context['cart'] = cart
-        context['cargo'] = cargo
+        context["cart"] = cart
+        context["cargo_list"] = cargo
         return context
 
 
@@ -199,7 +253,7 @@ class CheckoutView(EcomMixin, CreateView):
             cart_obj = Cart.objects.get(id=cart_id)
         else:
             cart_obj = None
-        context['cart'] = cart_obj
+        context["cart"] = cart_obj
         return context
 
     def form_valid(self, form):
@@ -211,13 +265,17 @@ class CheckoutView(EcomMixin, CreateView):
             form.instance.discount = 0
             form.instance.total = cart_obj.total
             form.instance.order_status = "Order Received"
-            del self.request.session['cart_id']
+            del self.request.session["cart_id"]
             pm = form.cleaned_data.get("payment_method")
             order = form.save()
             if pm == "Khalti":
-                return redirect(reverse("ecomapp:khaltirequest") + "?o_id=" + str(order.id))
+                return redirect(
+                    reverse("ecomapp:khaltirequest") + "?o_id=" + str(order.id)
+                )
             elif pm == "Esewa":
-                return redirect(reverse("ecomapp:esewarequest") + "?o_id=" + str(order.id))
+                return redirect(
+                    reverse("ecomapp:esewarequest") + "?o_id=" + str(order.id)
+                )
         else:
             return redirect("ecomapp:home")
         return super().form_valid(form)
@@ -227,9 +285,7 @@ class KhaltiRequestView(View):
     def get(self, request, *args, **kwargs):
         o_id = request.GET.get("o_id")
         order = Order.objects.get(id=o_id)
-        context = {
-            "order": order
-        }
+        context = {"order": order}
         return render(request, "khaltirequest.html", context)
 
 
@@ -241,10 +297,7 @@ class KhaltiVerifyView(View):
         print(token, amount, o_id)
 
         url = "https://khalti.com/api/v2/payment/verify/"
-        payload = {
-            "token": token,
-            "amount": amount
-        }
+        payload = {"token": token, "amount": amount}
         headers = {
             "Authorization": "Key test_secret_key_f59e8b7d18b4499ca40f68195a846e9b"
         }
@@ -259,9 +312,7 @@ class KhaltiVerifyView(View):
             order_obj.save()
         else:
             success = False
-        data = {
-            "success": success
-        }
+        data = {"success": success}
         return JsonResponse(data)
 
 
@@ -269,25 +320,24 @@ class EsewaRequestView(View):
     def get(self, request, *args, **kwargs):
         o_id = request.GET.get("o_id")
         order = Order.objects.get(id=o_id)
-        context = {
-            "order": order
-        }
+        context = {"order": order}
         return render(request, "esewarequest.html", context)
 
 
 class EsewaVerifyView(View):
     def get(self, request, *args, **kwargs):
         import xml.etree.ElementTree as ET
+
         oid = request.GET.get("oid")
         amt = request.GET.get("amt")
         refId = request.GET.get("refId")
 
         url = "https://uat.esewa.com.np/epay/transrec"
         d = {
-            'amt': amt,
-            'scd': 'epay_payment',
-            'rid': refId,
-            'pid': oid,
+            "amt": amt,
+            "scd": "epay_payment",
+            "rid": refId,
+            "pid": oid,
         }
         resp = requests.post(url, d)
         root = ET.fromstring(resp.content)
@@ -295,13 +345,13 @@ class EsewaVerifyView(View):
 
         order_id = oid.split("_")[1]
         order_obj = Order.objects.get(id=order_id)
-        if status == "Success":
-            order_obj.payment_completed = True
-            order_obj.save()
-            return redirect("/")
-        else:
 
-            return redirect("/esewa-request/?o_id="+order_id)
+        if status != "Success":
+            return redirect(f"/esewa-request/?o_id={order_id}")
+
+        order_obj.payment_completed = True
+        order_obj.save()
+        return redirect("/")
 
 
 class ProductOwnerRegistrationView(CreateView):
@@ -320,10 +370,10 @@ class ProductOwnerRegistrationView(CreateView):
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
+
 
 class CustomerRegistrationView(CreateView):
     template_name = "customerregistration.html"
@@ -341,11 +391,9 @@ class CustomerRegistrationView(CreateView):
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
-
 
 
 class CustomerLogoutView(View):
@@ -367,14 +415,17 @@ class CustomerLoginView(FormView):
         if usr is not None and Customer.objects.filter(user=usr).exists():
             login(self.request, usr)
         else:
-            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid credentials"})
+            return render(
+                self.request,
+                self.template_name,
+                {"form": self.form_class, "error": "Invalid credentials"},
+            )
 
         return super().form_valid(form)
 
     def get_success_url(self):
         if "next" in self.request.GET:
-            next_url = self.request.GET.get("next")
-            return next_url
+            return self.request.GET.get("next")
         else:
             return self.success_url
 
@@ -391,16 +442,17 @@ class CustomerProfileView(TemplateView):
     template_name = "customerprofile.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
-            pass
-        else:
+        if (
+            not request.user.is_authenticated
+            or not Customer.objects.filter(user=request.user).exists()
+        ):
             return redirect("/login/?next=/profile/")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         customer = self.request.user.customer
-        context['customer'] = customer
+        context["customer"] = customer
         orders = Order.objects.filter(cart__customer=customer).order_by("-id")
         context["orders"] = orders
         return context
@@ -412,7 +464,10 @@ class CustomerOrderDetailView(DetailView):
     context_object_name = "ord_obj"
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
+        if (
+            request.user.is_authenticated
+            and Customer.objects.filter(user=request.user).exists()
+        ):
             order_id = self.kwargs["pk"]
             order = Order.objects.get(id=order_id)
             if request.user.customer != order.cart.customer:
@@ -429,7 +484,10 @@ class SearchView(TemplateView):
         context = super().get_context_data(**kwargs)
         kw = self.request.GET.get("keyword")
         results = Product.objects.filter(
-            Q(title__icontains=kw) | Q(description__icontains=kw) | Q(return_policy__icontains=kw))
+            Q(title__icontains=kw)
+            | Q(description__icontains=kw)
+            | Q(return_policy__icontains=kw)
+        )
         print(results)
         context["results"] = results
         return context
@@ -444,16 +502,18 @@ class PasswordForgotView(FormView):
         # get email from user
         email = form.cleaned_data.get("email")
         # get current host ip/domain
-        url = self.request.META['HTTP_HOST']
+        url = self.request.META["HTTP_HOST"]
         # get customer and then user
         customer = Customer.objects.get(user__email=email)
-        user = customer.user
         # send mail to the user with email
-        text_content = 'Please Click the link below to reset your password. '
-        html_content = url + "/password-reset/" + email + \
-            "/" + password_reset_token.make_token(user) + "/"
+        text_content = "Please Click the link below to reset your password. "
+        user = customer.user
+        html_content = (
+            f"{url}/password-reset/{email}/{password_reset_token.make_token(user)}/"
+        )
+
         send_mail(
-            'Password Reset Link | Django STOPPS',
+            "Password Reset Link | Django STOPPS",
             text_content + html_content,
             settings.EMAIL_HOST_USER,
             [email],
@@ -471,20 +531,19 @@ class PasswordResetView(FormView):
         email = self.kwargs.get("email")
         user = User.objects.get(email=email)
         token = self.kwargs.get("token")
-        if user is not None and password_reset_token.check_token(user, token):
-            pass
-        else:
+        if user is None or not password_reset_token.check_token(user, token):
             return redirect(reverse("ecomapp:passworforgot") + "?m=e")
 
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        password = form.cleaned_data['new_password']
+        password = form.cleaned_data["new_password"]
         email = self.kwargs.get("email")
         user = User.objects.get(email=email)
         user.set_password(password)
         user.save()
         return super().form_valid(form)
+
 
 # admin pages
 
@@ -501,15 +560,20 @@ class AdminLoginView(FormView):
         if usr is not None and Admin.objects.filter(user=usr).exists():
             login(self.request, usr)
         else:
-            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid credentials"})
+            return render(
+                self.request,
+                self.template_name,
+                {"form": self.form_class, "error": "Invalid credentials"},
+            )
         return super().form_valid(form)
 
 
 class AdminRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and Admin.objects.filter(user=request.user).exists():
-            pass
-        else:
+        if (
+            not request.user.is_authenticated
+            or not Admin.objects.filter(user=request.user).exists()
+        ):
             return redirect("/admin-login/")
         return super().dispatch(request, *args, **kwargs)
 
@@ -520,8 +584,10 @@ class AdminHomeView(AdminRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["pendingorders"] = Order.objects.filter(
-            order_status="Order Received").order_by("-id")
+            order_status="Order Received"
+        ).order_by("-id")
         return context
+
 
 class AdminOrderDetailView(AdminRequiredMixin, DetailView):
     template_name = "adminpages/adminorderdetail.html"
@@ -547,7 +613,9 @@ class AdminOrderStatuChangeView(AdminRequiredMixin, View):
         new_status = request.POST.get("status")
         order_obj.order_status = new_status
         order_obj.save()
-        return redirect(reverse_lazy("ecomapp:adminorderdetail", kwargs={"pk": order_id}))
+        return redirect(
+            reverse_lazy("ecomapp:adminorderdetail", kwargs={"pk": order_id})
+        )
 
 
 class AdminProductListView(AdminRequiredMixin, ListView):
@@ -569,7 +637,8 @@ class AdminProductCreateView(AdminRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-#Linfox Page
+# Linfox Page
+
 
 class LinfoxLoginView(FormView):
     template_name = "linfox/linfoxlogin.html"
@@ -583,16 +652,23 @@ class LinfoxLoginView(FormView):
         if usr is not None and Admin.objects.filter(user=usr).exists():
             login(self.request, usr)
         else:
-            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid credentials"})
+            return render(
+                self.request,
+                self.template_name,
+                {"form": self.form_class, "error": "Invalid credentials"},
+            )
         return super().form_valid(form)
+
 
 class LinfoxRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and Admin.objects.filter(user=request.user).exists():
-            pass
-        else:
+        if (
+            not request.user.is_authenticated
+            or not Admin.objects.filter(user=request.user).exists()
+        ):
             return redirect("/linfox-login/")
         return super().dispatch(request, *args, **kwargs)
+
 
 class LinfoxHomeView(LinfoxRequiredMixin, TemplateView):
     template_name = "linfox/linfoxhome.html"
@@ -602,6 +678,7 @@ class LinfoxCargoListView(LinfoxRequiredMixin, ListView):
     template_name = "linfox/linfoxcargolist.html"
     queryset = Cargo.objects.all().order_by("-id")
     context_object_name = "allcargo"
+
 
 class LinfoxCargoCreateView(LinfoxRequiredMixin, CreateView):
     template_name = "linfox/linfoxproductcreate.html"
@@ -613,7 +690,7 @@ class LinfoxCargoCreateView(LinfoxRequiredMixin, CreateView):
         images = self.request.FILES.getlist("more_images")
         for i in images:
             LinfoxImage.objects.create(cargo=p, image=i)
-        return super().form_valid(form)     
+        return super().form_valid(form)
 
 
 class AdminCargoDetailView(LinfoxRequiredMixin, DetailView):
@@ -624,7 +701,7 @@ class AdminCargoDetailView(LinfoxRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["allstatus"] = ORDER_STATUS
-        return context      
+        return context
 
 
 class AdminCargoStatuChangeView(LinfoxRequiredMixin, View):
@@ -634,7 +711,9 @@ class AdminCargoStatuChangeView(LinfoxRequiredMixin, View):
         new_status = request.POST.get("status")
         order_obj.order_status = new_status
         order_obj.save()
-        return redirect(reverse_lazy("ecomapp:adminocargodetail", kwargs={"pk": order_id}))             
+        return redirect(
+            reverse_lazy("ecomapp:adminocargodetail", kwargs={"pk": order_id})
+        )
 
 
 # class RegistrationView(CreateView):
@@ -660,6 +739,7 @@ class AdminCargoStatuChangeView(LinfoxRequiredMixin, View):
 
 # product owner Page
 
+
 class productOwnerLoginView(FormView):
     template_name = "productOwner/ProductOwnerlogin.html"
     form_class = CustomerLoginForm
@@ -672,16 +752,23 @@ class productOwnerLoginView(FormView):
         if usr is not None and ProductOwner.objects.filter(user=usr).exists():
             login(self.request, usr)
         else:
-            return render(self.request, self.template_name, {"form": self.form_class, "error": "Invalid credentials"})
+            return render(
+                self.request,
+                self.template_name,
+                {"form": self.form_class, "error": "Invalid credentials"},
+            )
         return super().form_valid(form)
+
 
 class productOwnerRequiredMixin(object):
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and ProductOwner.objects.filter(user=request.user).exists():
-            pass
-        else:
+        if (
+            not request.user.is_authenticated
+            or not ProductOwner.objects.filter(user=request.user).exists()
+        ):
             return redirect("/product-login/")
         return super().dispatch(request, *args, **kwargs)
+
 
 class productOwnerHomeView(productOwnerRequiredMixin, TemplateView):
     template_name = "productOwner/productOwnerhome.html"
@@ -692,13 +779,16 @@ class productOwnerListView(productOwnerRequiredMixin, ListView):
     queryset = Product.objects.all().order_by("-id")
     context_object_name = "allproducts"
 
+
 class productOwner1ListView(productOwnerRequiredMixin, ListView):
     template_name = "productOwner/productOwnerlist.html"
     queryset = User.objects.all().order_by("-id")
     context_object_name = "alluser"
 
+
 # def sample_view(request):
 #     current_user = request.user
+
 
 class productOwnerCreateView(productOwnerRequiredMixin, CreateView):
     template_name = "productOwner/productCreatePcreate.html"
@@ -710,7 +800,7 @@ class productOwnerCreateView(productOwnerRequiredMixin, CreateView):
         images = self.request.FILES.getlist("more_images")
         for i in images:
             ProductImage.objects.create(cargo=p, image=i)
-        return super().form_valid(form)        
+        return super().form_valid(form)
 
 
 # class indexemail( CreateView):
@@ -724,6 +814,4 @@ class productOwnerCreateView(productOwnerRequiredMixin, CreateView):
 #                   [email], fail_silently=False)
 #         return render(requests, 'email_sent.html', {'email': email})
 
-#       return render(requests, 'customerregistration.html', {})            
-
-
+#       return render(requests, 'customerregistration.html', {})

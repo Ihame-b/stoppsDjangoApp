@@ -24,21 +24,29 @@
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{cp.product.title}}</td>
-                        {% comment %} <td> <a href="#">{{cp.cargo.driverName}}</a> </td> {% endcomment %}
                         <td>
-                            <select class="form-select">
-                                {% for cg in cargo %}
-                                    <option> {{cg.CampanyName}} - {{cg.price}}</option>
-                                {% endfor %}
-                            </select> 
+                            {{cp.cargo.CampanyName}} - {{cp.cargo.price}}
                         </td>
                         <td>{{cp.rate}}</td>
                         <td>{{cp.quantity}}</td>
                         <td>{{cp.subtotal}}</td>
-                        <td>
-                            <a href="{% url 'ecomapp:managecart' cp.id %}?action=inc" class="btn btn-primary"> + </a>
-                            <a href="{% url 'ecomapp:managecart' cp.id %}?action=dcr" class="btn btn-warning"> - </a>
-                            <a href="{% url 'ecomapp:managecart' cp.id %}?action=rmv" class="btn btn-danger"> x </a>
+                        <td style='display: flex; gap: 10px'>
+                            <a style="width: 50px" href="{% url 'ecomapp:managecart' cp.id %}?action=inc" class="btn btn-primary"> + </a>
+                            <a style="width: 50px" href="{% url 'ecomapp:managecart' cp.id %}?action=dcr" class="btn btn-warning"> - </a>
+                            <a style="width: 50px" href="{% url 'ecomapp:managecart' cp.id %}?action=rmv" class="btn btn-danger"> x </a>
+                            <div class="btn-group dropright">
+                                <button style="min-width: 50px" class="btn btn-info dropdown-toggle" type="button" data-toggle="dropdown">Choose Cargo</button>
+                                <ul class="dropdown-menu" style="padding: 20px; width: 200px;">
+                                    <li class="dropdown-header">Select Cargo</li>
+                                    {% for cargo in cargo_list %}
+                                    <li> 
+                                        <a style="width: 50px" href="{% url 'ecomapp:managecart' cp.id %}?action=cargo&id={{cargo.id}}"> 
+                                            {{cargo.CampanyName}} - {{cargo.price}}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
