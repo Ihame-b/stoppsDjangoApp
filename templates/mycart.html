@@ -41,7 +41,7 @@
                                     {% for cargo in cargo_list %}
                                     <li> 
                                         <a style="width: 50px" href="{% url 'ecomapp:managecart' cp.id %}?action=cargo&id={{cargo.id}}"> 
-                                            {{cargo.CampanyName}} - {{cargo.price}}
+                                            {{cargo.CampanyName}} - {{cargo.address}}
                                         </a>
                                     </li>
                                     {% endfor %}

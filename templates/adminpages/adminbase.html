@@ -80,48 +80,55 @@
 
 </head>
 <body>
-    <!-- <div class="container">
-        <a href="{% url 'ecomapp:adminhome' %}">Home</a> | 
-        <a href="{% url 'ecomapp:adminorderlist' %}">All Orders</a> | 
-        <a href="{% url 'ecomapp:adminproductlist' %}">All Products</a> | 
-        <a href="{% url 'ecomapp:linfoxcargolist' %}">All Transport</a> | 
-        <a href="{% url 'ecomapp:home' %}" target="_blank">Visit site</a>
-    </div> -->
-
    <!-- <div class="container"> -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-info">
      <a class="navbar-brand" href="{% url 'ecomapp:home' %}"><img id="logo" src="{% static '/yp.png' %}"></a>   
 
         <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
         <ul class="navbar-nav mr-auto" style="align-items: center;">
-
             <li>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:home' %}">Home</a> 
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminhome' %}"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-steps" viewBox="0 0 16 16">
+  <path d="M.5 0a.5.5 0 0 1 .5.5v15a.5.5 0 0 1-1 0V.5A.5.5 0 0 1 .5 0zM2 1.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1-.5-.5v-1zm2 4a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-1z"/>
+</svg> Orders Pending</a> 
             </li>
             <li>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminhome' %}">Pending Orders</a> 
-            </li>
-            <li>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminorderlist' %}">All Orders</a> 
-            </li>
-
-            <li>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminproductlist' %}">All Products</a> 
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminorderlist' %}"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-all" viewBox="0 0 16 16">
+  <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
+</svg> Orders Done</a> 
             </li>
 
             <li>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:linfoxcargolist' %}">All Transport</a> 
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:adminproductlist' %}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shop-window" viewBox="0 0 16 16">
+  <path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.371 2.371 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 6.125 8a2.37 2.37 0 0 1-1.875-.917A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976l2.61-3.045zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0zM1.5 8.5A.5.5 0 0 1 2 9v6h12V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5zm2 .5a.5.5 0 0 1 .5.5V13h8V9.5a.5.5 0 0 1 1 0V13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5a.5.5 0 0 1 .5-.5z"/>
+</svg> Products</a> 
             </li>
+
+            <li>
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:linfoxcargolist' %}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+  <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+</svg> Transport</a> 
+            </li>
+
+            <li>
+              <a class="nav-link btn btn-primary" href="https://opay-web.oltranz.com/admin/transactions" ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-truck" viewBox="0 0 16 16">
+<path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+</svg> Payment</a> 
+          </li>
 
         </ul>
 
         <form class="d-flex justify-content-center" class="form-inline my-2 my-lg-0" action="{% url 'ecomapp:search' %}" method="GET">
             <input name="keyword" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required>
-            <button class="btn btn-danger my-2 my-sm-0" type="submit">Search</button>
+            <button class="  my-2 my-sm-0 sty" style="background-color: #007bff;" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+</svg></button>
             </form>
 
               <div>
-                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
+                <a class="nav-link btn btn-primary" href="{% url 'ecomapp:customerlogout' %}"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+  <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg> Logout</a>
               </div>
 
     </nav>
@@ -137,7 +144,10 @@
          <ul class="list-inline">
           {% if request.user %}
               {% comment %} <a class="list-inline-item" href="{% url 'ecomapp:customerprofile' %}">My Profile</a> {% endcomment %}
-              <a class="list-inline-item" href="{% url 'ecomapp:customerlogout' %}">Logout</a>
+              <a class="list-inline-item" href="{% url 'ecomapp:customerlogout' %}"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z"/>
+  <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg> Logout</a>
               {% else %}
               
               <div >
@@ -152,7 +162,18 @@
               </div>
           </div>
               {% endif %}</ul>
-            <p class="copyright">Company Name © 2022</p>
+
+              <div class="copyright" style="background-color: black;" >
+                <div class="container">
+                   <div class="row">
+                      <div class="col-md-12" >
+                         <p   style="color: black;" >© 2023 All Rights Reserved. Design by<a style="color: black;" href="https://ihame11.github.io"> IHAME</a></p>
+                      </div>
+                   </div>
+                </div>
+             </div> 
+
+            <p class="copyright">Linfox Rwanda © 2023</p>
         </footer>
     </div>
 

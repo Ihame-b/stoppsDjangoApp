@@ -366,6 +366,9 @@ class ProductOwnerRegistrationView(CreateView):
         user = User.objects.create_user(username, email, password)
         form.instance.user = user
         login(self.request, user)
+
+        send_mail("Welcome to STOPPS business", "Thank for registering on stopps", settings.EMAIL_HOST_USER,
+        [email], fail_silently=False)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -387,6 +390,10 @@ class CustomerRegistrationView(CreateView):
         user = User.objects.create_user(username, email, password)
         form.instance.user = user
         login(self.request, user)
+
+        send_mail("Welcome to STOPPS business", "Thank for registering on stopps", settings.EMAIL_HOST_USER,
+        [email], fail_silently=False)
+        
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -442,17 +449,16 @@ class CustomerProfileView(TemplateView):
     template_name = "customerprofile.html"
 
     def dispatch(self, request, *args, **kwargs):
-        if (
-            not request.user.is_authenticated
-            or not Customer.objects.filter(user=request.user).exists()
-        ):
+        if request.user.is_authenticated and Customer.objects.filter(user=request.user).exists():
+            pass
+        else:
             return redirect("/login/?next=/profile/")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         customer = self.request.user.customer
-        context["customer"] = customer
+        context['Customer'] = customer
         orders = Order.objects.filter(cart__customer=customer).order_by("-id")
         context["orders"] = orders
         return context

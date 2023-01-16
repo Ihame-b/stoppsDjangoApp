@@ -11,8 +11,9 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>SN</th>
+                        <th style="background-color: #007bff;">SN</th>
                         <th>CampanyName</th>
+                        {% comment %} <th>Owner</th> {% endcomment %}
                         <th>Image</th>
                         <th>Price</th>
                         <th>Adress</th>
@@ -24,6 +25,7 @@
                     <tr>
                         <td>{{forloop.counter}}</td>
                         <td>{{p.CampanyName}}</td>
+                         {% comment %} <td>{{p.driverName}}</td> {% endcomment %}
                         <td><img src="{{p.image.url}}" style="height: 100px;" alt=""></td>
                         <td>{{p.price}}</td>
                         <td>{{p.address}}</td>

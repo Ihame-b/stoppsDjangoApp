@@ -15,7 +15,7 @@
                         <th>Product</th>
                         <th>Rate</th>
                         <th>Quantity</th>
-                        <th>Subtotal</th>
+                        <th>Subtotal & Transport</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,7 +30,7 @@
                     {% endfor %}
                     <tr>
                         <th colspan="4" class="text-right">Total</th>
-                        <th>Rs. {{cart.total}}</th>
+                        <th>RWF. <span id='tt'>{{cart.total}}</span></th>
                     </tr>
                 </tbody>
                
@@ -65,13 +65,74 @@
           <label for="exampleInputEmail1">Amount</label>
           <input type="number" id="amount" class="form-control">
 </div> type="submit" {% endcomment %}
-
-        <button  class="btn btn-info">Place order</button>
-            </form>
+{% comment %} <button  class="btn btn-info">Place order</button> {% endcomment %}
+</form>
+        <button  class="btn btn-info" onclick="makePayment()">Card/momo flutterwave</button>
+        {% comment %} <button  class="btn btn-info" onclick="makePayment()">Pay with momo</button> {% endcomment %}
+         <button  class="btn btn-info" onclick="OltranzPay()">Pay with momo</button>
+            
         </div>
     </div>
 </div>
 
 
+<script src="https://checkout.flutterwave.com/v3.js"></script> 
+<script>
+  function makePayment() {
+    let amount = document.getElementById('tt').innerText
+    let email = document.querySelector('input[name=email]').value
+    let phone_number = document.querySelector('input[name=mobile]').value
+    FlutterwaveCheckout({
+      public_key: "FLWPUBK_TEST-5673fc12394b028302345a548ac784d8-X",
+      tx_ref: new Date().getTime(),
+      amount,
+      payment_options: 'card,mobilemoney',
+      currency: "RWF",
+      network: "MTN",
+      redirect_url: 'http://127.0.0.1:8000/',
+      customer: {
+        email,
+        phone_number,
+        name,
+      },
+      customizations: {
+        title: "Order and Transport",
+        description: "Keep up with your products consumption ",
+      },
+      callback: function (data) {
+        console.log(data);
+      },
+      onclose: function() {},
+    });
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+<script>
+let phone_number = document.querySelector('input[name=mobile]').value 
+let amount = document.getElementById('tt').innerText
+let phone = document.querySelector('input[id=id_mobile]').value  
+function OltranzPay(){
+  let phone = document.querySelector('input[name=mobile]').value
+  let amount = document.getElementById('tt').innerText
+  console.log(uuidv4())
+  axios({
+      method: 'post',
+      url: 'https://opay-api.oltranz.com/opay/paymentrequest',
+      data: {
+          "telephoneNumber" : phone,
+          "amount" : amount,
+          "organizationId" : "c72d096c-7997-4f72-9c1b-88744e3831f7",
+          "description" : "Payment for stopps",
+          "callbackUrl" : "https://webhook.site/b0353218-4205-49d2-a1ad-88f1ccdd246f",
+          "transactionId" : `${uuidv4()}`
+      }
+  }).then((response)=>{
+    console.log('axios response', response)
+  }).catch((error)=>{
+    console.log('errrr', error.response)
+  })
+}
+</script>
 
 {% endblock %}
